@@ -14,6 +14,7 @@ hook global BufCreate .*(\.v|\.vv|\.vsh) %{
 # ‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 hook global WinSetOption filetype=v %{
+    set-option buffer formatcmd "v fmt '%val{buffile}'"
 }
 
 hook -group v-highlight global WinSetOption filetype=v %{
@@ -62,5 +63,18 @@ evaluate-commands %sh{
         add-highlighter shared/v/code/ regex \b($(join "${values}" '|'))\b 0:value
         add-highlighter shared/v/code/ regex \b($(join "${functions}" '|'))\b 0:builtin
     "
+}
+
+# Auto-format
+# ‾‾‾‾‾‾‾‾‾‾‾
+
+define-command -params ..1 v-format -docstring "v-format: runs v fmt on v-files" %{
+    evaluate-commands %sh{
+        v fmt -w ${kak_buffile} 2> /tmp/v-kak-stderr
+        if ! [ $? ]; then
+            printf %s\\n "echo -debug '$(cat /tmp/v-kak-stderr)'"
+        fi
+    }
+    edit!
 }
 

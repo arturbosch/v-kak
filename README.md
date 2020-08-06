@@ -3,6 +3,7 @@
 ## Features
 
 - basic syntax highlighting
+- declares `v fmt` as the formatcmd
 
 ## Install with plug.kak
 
